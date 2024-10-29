@@ -1,5 +1,5 @@
-
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import validates
 
 db = SQLAlchemy()
 
@@ -21,6 +21,8 @@ class Appearance(db.Model):
     episode_id = db.Column(db.Integer, db.ForeignKey('episode.id'), nullable=False)
     guest_id = db.Column(db.Integer, db.ForeignKey('guest.id'), nullable=False)
 
-    def validate_rating(self):
-        if self.rating < 1 or self.rating > 5:
+    @validates('rating')
+    def validate_rating(self, key, value):
+        if value < 1 or value > 5:
             raise ValueError("Rating must be between 1 and 5.")
+        return value
